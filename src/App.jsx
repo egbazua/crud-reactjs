@@ -7,11 +7,13 @@ function App() {
   const [taskForm, setTaskForm] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [id, setId] = useState('');
+  const [error, setError] = useState(null);
 
   const addTask = (e) => {
     e.preventDefault();
 
     if(!task.trim()){
+      setError('Please type something...');
       return console.log("empty element")
     }
 
@@ -23,6 +25,7 @@ function App() {
     ])
 
     setTask('');
+    setError(null);
   }
 
   const deleteTask = (id) => {
@@ -44,6 +47,7 @@ function App() {
     e.preventDefault();
 
     if(!task.trim()){
+      setError('Please type something...');
       return console.log("empty element")
     }
 
@@ -53,6 +57,7 @@ function App() {
      setEditMode(false);
      setTask('');
      setId('');
+     setError(null);
   }
 
   return (
@@ -65,13 +70,17 @@ function App() {
             <h4 className="text-center"> Task List </h4>
             <ul className="list-group">
               {
-                taskForm.map(item => (
-                  <li className="list-group-item mt-1" key={item.id}>
-                    <span className="lead"> {item.taskName} </span>
-                    <button className="btn btn-danger btn-sm float-end mx-2" onClick={() => deleteTask(item.id)} >Delete</button>
-                    <button className="btn btn-warning btn-sm float-end" onClick={() => taskEditMode(item)}>Edit</button>
-                </li>
-                ))
+                taskForm.length === 0 ? (
+                  <li className="list-group-item"> No Tasks </li>
+                ) : (
+                  taskForm.map(item => (
+                    <li className="list-group-item mt-1" key={item.id}>
+                      <span className="lead"> {item.taskName} </span>
+                      <button className="btn btn-danger btn-sm float-end mx-2" onClick={() => deleteTask(item.id)} >Delete</button>
+                      <button className="btn btn-warning btn-sm float-end" onClick={() => taskEditMode(item)}>Edit</button>
+                  </li>
+                  ))
+                )
               }
             </ul>
           </div>
@@ -82,6 +91,10 @@ function App() {
               }
             </h4>
             <form onSubmit={editMode ? editTask : addTask}>
+              {
+                error ? <span className="text-danger">{error}</span> : null
+              }
+
               <input type="text" onChange={ e => setTask(e.target.value) } value={task} className="form-control mb-2" placeholder="Enter Task"/>
               {
                 editMode ? (
